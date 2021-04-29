@@ -93,7 +93,6 @@ int main() {
 	Mat I_f(bound_b - bound_u + 1, bound_r - bound_l + 1, CV_32FC3, Scalar(0));
 
 	// inverse warping with bilinear interplolation
-	//(i,j)는 image1이 affine된 후 image2와 합쳐졌을때의 범위안에서 움직인다
 	for (int i = -diff_x_; i < I_f.rows - diff_x_; i++) {
 		for (int j = -diff_y_; j < I_f.cols - diff_y_; j++) {
 			//compute the source location
@@ -111,11 +110,10 @@ int main() {
 			float lambda = x - x1;
 
 			if (x1 >= 0 && x2 < I2_row && y1 >= 0 && y2 < I2_col) {
-				//bilinear interpolation으로 계산
+				//bilinear interpolation
 				Vec3f p1 = I2.at<Vec3f>(x1, y2) * mu + I2.at<Vec3f>(x1, y1) * (1 - mu);
 				Vec3f p2 = I2.at<Vec3f>(x2, y2) * mu + I2.at<Vec3f>(x2, y1) * (1 - mu);
-				//final image에 복사한다
-				//이미지의 시작점이 (-diff_x_, -diff_y_)이므로 복사하는 픽셀을 x축으로 diff_x_와 y축으로 diff_y_만큼 더해서 복사한다
+				
 				I_f.at<Vec3f>(i + diff_x_, j + diff_y_) = p2 * lambda + p1 * (1 - lambda);
 
 			}
@@ -156,14 +154,14 @@ Mat cal_affine(int ptl_x[], int ptl_y[], int ptr_x[], int ptr_y[], int number_of
 		  0, 0, 0, x2, y2, 1;
 		  ...
 		  xn, yn, 1, 0, 0, 0;
-		  0, 0, 0, xn, yn, 1; ] 의 형태로 초기화
+		  0, 0, 0, xn, yn, 1; ]
 	b = [ x1;
 		  y1;
 		  x2;
 		  y2;
 		  ...
 		  xn;
-		  yn; ] 의 형태로 초기화 한다
+		  yn; ]
 	*/
 	for (int i = 0; i < number_of_points; i++) {
 
